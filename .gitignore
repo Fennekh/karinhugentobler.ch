@@ -1,0 +1,16 @@
+# --- not published (Karin, 18.10.2026) ---
+# Unused pictures and videos were moved out of this folder (to ../removed-from-site).
+
+# internal notes and helper scripts
+NOTIZEN.md
+tools/
+
+# pages that are not linked anywhere
+work/aber-suscht-gahts-guet.html
+work/zeit-raum.html
+search.html
+js/search-index.js
+prozess/
+
+# system files
+.DS_Store
