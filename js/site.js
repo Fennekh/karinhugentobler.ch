@@ -952,6 +952,13 @@
       }, { rootMargin: '100px 0px' });
       morphTiles.forEach(function (t) { mio.observe(t); });
     }
+    if (deskWobble) {   // desktop: scrolling makes the pebbles wobble a little more, then they calm down again
+      var lastWY = window.scrollY;
+      window.addEventListener('scroll', function () {
+        var dy = Math.abs(window.scrollY - lastWY); lastWY = window.scrollY;
+        morphs.forEach(function (m) { if (m.visible) m.burst = Math.min(.7, (m.burst || 0) + dy * .004); });
+      }, { passive: true });
+    }
     var lastT = performance.now();
     var tick = function (now) {
       var dt = Math.min(.1, (now - lastT) / 1000); lastT = now;
