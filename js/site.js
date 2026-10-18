@@ -825,6 +825,16 @@
       });
     }, { threshold: 0.25 });
     autoVids.forEach(function (v) { vio.observe(v); });
+    // start loading well before a video scrolls into view, so it plays right away (like the 1824 iris trio)
+    var vpre = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        var v = e.target;
+        if (v.preload !== 'auto') { v.preload = 'auto'; v.load(); }
+        vpre.unobserve(v);
+      });
+    }, { rootMargin: '900px 0px' });
+    autoVids.forEach(function (v) { vpre.observe(v); });
   }
 
   // Deep links (#digital, #print …): images above the target load lazily and push it
@@ -887,6 +897,8 @@
     sh.className = 'tile__shade';
     var svg = mk('svg', { viewBox: '0 0 1.5 1.5', preserveAspectRatio: 'none', 'aria-hidden': 'true' }, sh);
     mk('rect', { width: 1.5, height: 1.5, fill: 'rgb(30,38,46)', 'fill-opacity': '.2', mask: 'url(#pbr-' + i + ')' }, mk('g', { filter: 'url(#pbblur)' }, svg));
+    // phones: instead of the soft blurred rim (costly), just a fine line along the outline
+    mk('use', { href: '#pbp-' + i, class: 'tile__rim', transform: 'translate(.25 .25)', fill: 'none', stroke: 'rgba(30,38,46,.22)', 'stroke-width': '1', 'vector-effect': 'non-scaling-stroke' }, svg);
     t.insertBefore(sh, t.querySelector('.tile__info'));
 
     return t._morph = {

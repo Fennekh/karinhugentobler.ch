@@ -2386,3 +2386,9 @@ html, body { overflow-x: clip; }
   .logo-link-copy:active { box-shadow: inset 0 1.5px 3px rgba(0, 0, 0, .3), inset 0 0 0 .5px rgba(0, 0, 0, .05) !important; }
 }
 @media (max-width: 767px) and (hover: hover) { .logo-link-copy:hover { scale: 1.07; } }
+/* bubble rim: soft blurred shadow on desktop; on phones and tablets just a fine line (much lighter to draw) */
+.tile__rim { display: none; }
+@media (max-width: 991px), (hover: none) {
+  .tile__shade > svg > g { display: none; }
+  .tile__rim { display: inline; }
+}
