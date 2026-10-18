@@ -2193,7 +2193,7 @@ body.pills-inline.has-pills .cat-pills.is-stuck { position: fixed !important; to
 /* phones: a little air under the statement, bubbles a touch smaller */
 @media (max-width: 599px) {
   .container-5 .grid-statement { margin-bottom: 28px !important; }
-  .container-5 .pingrid:not(.grid-statement) { margin-bottom: 20px !important; }   /* more air between bubbles */
+  .container-5 .pingrid:not(.grid-statement) { margin-bottom: 10px !important; }   /* air between bubbles */
 }
 /* phones: the first bubble starts right at the top, level with «About» */
 @media (max-width: 767px) { .section:has(> .container-5) { margin-top: -52px !important; padding-top: 0 !important; } }
@@ -2404,3 +2404,7 @@ html, body { overflow-x: clip; }
 .ic { display: inline-flex; align-items: center; line-height: 0; }
 .ic-arrow { width: 1.05em; height: 1.05em; flex: none; vertical-align: -0.15em; }
 .ic-arrow--left { transform: scaleX(-1); }
+/* phones and tablets: pictures always at full strength (no fade-in each time a bubble scrolls back into view) */
+@media (max-width: 991px), (hover: none) {
+  .container-5 .imggrid.blur, .container-5 .imggrid { opacity: 1 !important; transition: none !important; }
+}
