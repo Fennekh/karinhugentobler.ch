@@ -2408,3 +2408,8 @@ html, body { overflow-x: clip; }
 @media (max-width: 991px), (hover: none) {
   .container-5 .imggrid.blur, .container-5 .imggrid { opacity: 1 !important; transition: none !important; }
 }
+/* phones: «About» always level with the round home button and «Back to overview» */
+@media (max-width: 767px) {
+  .navigation-items-copy-copy { align-items: flex-start !important; }
+  .navigation-wrap-copy { align-self: flex-start !important; margin-top: 0 !important; }
+}
