@@ -1378,7 +1378,7 @@
       jr.style.setProperty('--jcx', cx + 'px');   // the side headings sit around the line
       var PPY = mobile ? (wide ? 90 : 80) : (wide ? 84 : 66), curTop = 0;   // wide: lots of room, it grows while scrolling   // compact
       var yrOf = function (li, last) {   // exact dates from data-start / data-end (e.g. 2019.5 = mid-2019), else the years in the text
-        var dv = last ? li.dataset.end : li.dataset.start;
+        var dv = last ? li.dataset.end : ((mobile && li.dataset.startM) || li.dataset.start);   // data-start-m: a slightly shifted point on phones, where lines would cross
         if (dv) return +dv;
         var m = ((li.querySelector('.tl__time') || {}).textContent || '').match(/(?:19|20)\d\d/g);
         return m ? +(last ? m[m.length - 1] : m[0]) : new Date().getFullYear();

@@ -2357,3 +2357,14 @@ html, body { overflow-x: clip; }
   body:has(.back-link) .logo-link-copy { top: 28px !important; }
 }
 @media (max-width: 767px) { .about-journey .tl__time, .tl__time { font-size: 11.5px !important; } }
+
+/* about photo: the picture always fills its bubble (no white edge at the bottom) */
+.bubble-photo--about { aspect-ratio: 2000 / 1357; padding: 0 !important; line-height: 0; }
+.bubble-photo--about img { position: absolute !important; inset: 0; width: 100% !important; height: 100% !important; object-fit: cover; }
+/* phones: the about photo closer to the pills above it */
+@media (max-width: 767px) { .split--about .split__media { padding-top: 0 !important; margin-top: -28px !important; } }
+/* about: «Get in touch» closer to the journey; the today sentence as large as the contact lead */
+.about-journey { margin-bottom: 0 !important; }
+.msg { margin-top: 72px !important; }
+@media (max-width: 767px) { .msg { margin-top: 48px !important; } }
+.journey__note .tl__role { font: 300 16px/1.5 Heebo, Montserrat, sans-serif !important; letter-spacing: 0 !important; }
