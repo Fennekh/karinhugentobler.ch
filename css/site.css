@@ -2380,11 +2380,9 @@ html, body { overflow-x: clip; }
 /* phones: the round home button behaves like «About» – paper look, grows under the pointer, pressed = inner shadow */
 @media (max-width: 767px) {
   .logo-link-copy {
-    background-color: #fbfbfb !important;
-    background-image: url(../assets/illu/paper.svg?v=3), url(../assets/illu/paper-light.svg?v=1) !important;
-    background-size: 300px 300px, 1400px 1400px !important;
+    background-color: #fbfbfb !important; background-image: none !important;   /* exactly like «About» */
     transition: scale .2s ease, box-shadow .2s;
   }
-  .logo-link-copy:active { box-shadow: inset 0 1.5px 3px rgba(0, 0, 0, .3), inset 0 0 0 .5px rgba(0, 0, 0, .05) !important; scale: .97; }
+  .logo-link-copy:active { box-shadow: inset 0 1.5px 3px rgba(0, 0, 0, .3), inset 0 0 0 .5px rgba(0, 0, 0, .05) !important; }
 }
 @media (max-width: 767px) and (hover: hover) { .logo-link-copy:hover { scale: 1.07; } }
