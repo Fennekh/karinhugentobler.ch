@@ -1145,7 +1145,7 @@ body, .div-block-13 { background-image: url(../assets/illu/paper.svg?v=2); }
 
 /* Touch / mobile view: bubble size follows the scroll position (set as --grow-s / --grow-i by JS) */
 @media (hover: none), (max-width: 767px) {
-  .container-5 .pingrid, .container-5 .pingrid.is-focus { transform: scale(var(--grow-s, .92)) !important; transition: transform .12s linear, scale .4s ease !important; }
+  .container-5 .pingrid, .container-5 .pingrid.is-focus { transform: scale(var(--grow-s, .76)) !important; transition: transform .12s linear, scale .4s ease !important; }
   .container-5 .pingrid .imggrid, .container-5 .pingrid.is-focus .imggrid { transform: scale(var(--grow-i, 1.174)) !important; transition: transform .12s linear, filter .9s ease, opacity .9s ease !important; }
 }
 
@@ -2193,8 +2193,7 @@ body.pills-inline.has-pills .cat-pills.is-stuck { position: fixed !important; to
 /* phones: a little air under the statement, bubbles a touch smaller */
 @media (max-width: 599px) {
   .container-5 .grid-statement { margin-bottom: 28px !important; }
-  .container-5 .pingrid:not(.grid-statement) { margin-bottom: -6px !important; }   /* bubbles closer together */
-  .container-5 .pingrid { transform: scale(1) !important; }   /* and a little bigger */
+  .container-5 .pingrid:not(.grid-statement) { margin-bottom: 20px !important; }   /* more air between bubbles */
 }
 /* phones: the first bubble starts right at the top, level with «About» */
 @media (max-width: 767px) { .section:has(> .container-5) { margin-top: -52px !important; padding-top: 0 !important; } }
@@ -2313,3 +2312,9 @@ body.pills-inline.has-pills .cat-pills.is-stuck { position: fixed !important; to
 /* subheadings in the media column: a little air below, and the very first one keeps its line padding too */
 .split__media .media-heading, .hz-project__media .media-heading { margin-bottom: 12px !important; }
 .split__media > .media-heading:first-child { padding-top: 14px !important; }
+
+/* never a sideways scroll on any page (e.g. the soft shadow around the about photo reached past the edge on phones);
+   «clip» instead of «hidden», so the sticky headings keep working */
+html, body { overflow-x: clip; }
+/* the photo bubble's soft shadow and zoomed image must not widen the page (they were cut by the pebble shape anyway) */
+.bubble-photo { overflow: clip !important; }

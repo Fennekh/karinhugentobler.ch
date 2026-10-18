@@ -972,8 +972,9 @@
   if (lit.length && !reduce) {
     var shade = function () {
       var vw = window.innerWidth, vh = window.innerHeight;
-      lit.forEach(function (t) {
-        var r = t.getBoundingClientRect();
+      var rects = [].map.call(lit, function (t) { return t.getBoundingClientRect(); });   // read everything first, then write (no layout thrashing)
+      lit.forEach(function (t, i) {
+        var r = rects[i];
         if (r.bottom < -200 || r.top > vh + 200) return;
         var dx = (r.left + r.width / 2 - vw / 2) / vw, dy = Math.max(-1, Math.min(1, (r.top + r.height / 2 - vh / 2) / (vh / 2)));
         // tile in the middle of the screen: even rim all round; moving up: light from below
@@ -987,10 +988,11 @@
         if (s) s.firstChild.style.transform = 'translate(' + (dx * 2 * k).toFixed(1) + 'px, ' + (dy * k).toFixed(1) + 'px)';
       });
     };
-    var lastShade = 0;
+    var shadeQueued = false;
     window.addEventListener('scroll', function () {
-      var now = Date.now();
-      if (now - lastShade > 30) { lastShade = now; shade(); }   // update while scrolling, at most ~30×/s
+      if (shadeQueued) return; shadeQueued = true;   // at most once per frame, in step with the screen
+      var f, tm, go = function () { cancelAnimationFrame(f); clearTimeout(tm); shadeQueued = false; shade(); };
+      f = requestAnimationFrame(go); tm = setTimeout(go, 50);
     }, { passive: true });
     window.addEventListener('scrollend', shade);
     lit.forEach(function (t) { t.addEventListener('mouseenter', function () { setTimeout(shade, 0); }); t.addEventListener('mouseleave', function () { setTimeout(shade, 0); }); });
@@ -1058,17 +1060,29 @@
         return;
       }
       var vh = window.innerHeight, mid = vh / 2;
-      focusTiles.forEach(function (t) {
-        var r = t.getBoundingClientRect();
-        if (r.bottom < -100 || r.top > vh + 100) return;
+      var rects = focusTiles.map(function (t) { return t.getBoundingClientRect(); });   // read first, then write
+      focusTiles.forEach(function (t, i) {
+        var r = rects[i];
+        if (r.bottom < -100 || r.top > vh + 100) {   // far off screen: small again, and nothing keeps playing
+          clearTimeout(t._dwell);
+          if (t._previewOn) { t._previewOn = false; t._previewStop(); }
+          if (t._grow !== 0) {
+            t._grow = 0; t.classList.remove('is-center');
+            t.style.setProperty('--grow-s', '.76'); t.style.setProperty('--grow-i', (.9 / .76).toFixed(4));
+          }
+          return;
+        }
         var p = Math.max(0, Math.min(1, 1 - Math.abs(r.top + r.height / 2 - mid) / (vh * 0.45)));
         p = p * p * (3 - 2 * p);                        // smoothstep …
         p = p * p * p * (p * (p * 6 - 15) + 10);         // … and smootherstep on top: a strong ease-in-out
         var centred = p > .85;                           // title (and preview) only while the bubble is in the middle
-        if (centred !== t.classList.contains('is-center')) {
-          t.classList.toggle('is-center', centred);
-          if (centred && t._previewStart) t._previewStart(); else if (!centred && t._previewStop) t._previewStop();
-        }
+        if (centred !== t.classList.contains('is-center')) t.classList.toggle('is-center', centred);
+        // the preview (video or pictures) only starts once the bubble has rested in the middle for a moment
+        // (each scroll step restarts the wait), so nothing loads while one scrolls past – keeps scrolling smooth
+        clearTimeout(t._dwell);
+        if (centred && t._previewStart && !t._previewOn) {
+          t._dwell = setTimeout(function () { if (t.classList.contains('is-center')) { t._previewOn = true; t._previewStart(); } }, 800);
+        } else if (!centred && t._previewOn) { t._previewOn = false; t._previewStop(); }
         var s = .76 + .24 * p;          // bubble: 0.76 → 1.00 (never wider than its column, so never cut)
         var seen = .9 + .12 * p;        // image as seen: 0.90 → 1.02 (zooms a little too)
         t._grow = p;
@@ -1077,7 +1091,11 @@
         t.style.setProperty('--grow-i', Math.max(1.06, seen / s).toFixed(4));
       });
     };
-    var queueGrow = function () { grow(); };   // scroll events already come once per frame
+    var queueGrow = function () {   // once per frame, together with the screen refresh
+      if (growQueued) return; growQueued = true;
+      var f, tm, go = function () { cancelAnimationFrame(f); clearTimeout(tm); grow(); };
+      f = requestAnimationFrame(go); tm = setTimeout(go, 50);   // timer only as a backup if frames are held back
+    };
     window.addEventListener('scroll', function () { queueGrow(); clearTimeout(focusTimer); focusTimer = setTimeout(pickFocus, 60); }, { passive: true });
     window.addEventListener('resize', function () { queueGrow(); pickFocus(); });
     grow(); pickFocus();
@@ -1101,12 +1119,12 @@
   var homeTiles = [].slice.call(document.querySelectorAll('.container-5 .pingrid'));
   var revealInView = function () {
     var vh = window.innerHeight;
-    homeTiles.forEach(function (t) {
-      if (t.classList.contains('is-in')) return;
+    // measured without the 70px rise-in offset, so bubbles that peek in at the bottom show up right away
+    homeTiles.filter(function (t) {
+      if (t.classList.contains('is-in')) return false;
       var r = t.getBoundingClientRect();
-      // measured without the 70px rise-in offset, so bubbles that peek in at the bottom show up right away
-      if (r.top - 70 < vh - 10 && r.bottom > 0) t.classList.add('is-in');
-    });
+      return r.top - 70 < vh - 10 && r.bottom > 0;
+    }).forEach(function (t) { t.classList.add('is-in'); });   // all reads first, then the writes
   };
   if (homeTiles.length) {
     window.addEventListener('scroll', revealInView, { passive: true });
@@ -1670,6 +1688,32 @@
         .then(function () { form.reset(); status.textContent = 'Thank you! Your message has been sent.'; })
         .catch(function () { status.textContent = 'Sorry, that did not work. Please try again later or write me on Instagram (@k.hugentobler).'; })
         .then(function () { send.disabled = false; });
+    });
+  });
+  // Links to a spot on the same page (e.g. «Contact me!» → the contact form): glide down instead of jumping
+  document.querySelectorAll('a[href^="#"]:not([href="#"])').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      var target = document.getElementById(a.getAttribute('href').slice(1));
+      if (!target) return;
+      e.preventDefault();
+      history.replaceState(null, '', a.getAttribute('href'));
+      var from = window.scrollY, to = from + target.getBoundingClientRect().top - (parseFloat(getComputedStyle(target).scrollMarginTop) || 0);
+      if (reduce) { window.scrollTo(0, to); return; }
+      var dist = to - from, dur = Math.min(1400, Math.max(600, Math.abs(dist) * .45)), t0 = performance.now();
+      var done = false;
+      var step = function () {
+        if (done) return;
+        var u = Math.min(1, (performance.now() - t0) / dur), k = u < .5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2;   // ease in and out
+        window.scrollTo(0, from + dist * k);
+        if (u >= 1) { done = true; return; }
+        next();
+      };
+      var raf, tmo;
+      var next = function () {   // next screen frame – with a timer as backup in case frames are held back
+        var go = function () { cancelAnimationFrame(raf); clearTimeout(tmo); step(); };
+        raf = requestAnimationFrame(go); tmo = setTimeout(go, 24);
+      };
+      step();
     });
   });
 })();
