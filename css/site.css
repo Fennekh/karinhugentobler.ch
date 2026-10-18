@@ -2292,3 +2292,20 @@ body.pills-inline.has-pills .cat-pills.is-stuck { position: fixed !important; to
 .legal-line a:hover{color:#000}
 @media (max-width:767px){.legal-line{margin-left:16px;margin-right:16px}}
 @media (max-width:991px){.legal-line--home{margin-bottom:96px}}
+
+/* contact form (about page, sent via Basin) */
+.msg { margin: 120px 32px 40px; padding: 32px 0 0; border-top: 1px solid #ddd; scroll-margin-top: 80px; color: #111; text-transform: none; text-align: left; }
+.msg__title { font: 700 clamp(28px, 3.2vw, 44px)/1.1 Heebo, sans-serif; letter-spacing: -.01em; margin: 0 0 8px; text-align: left; }
+.msg__lead { font: 300 16px/1.5 Heebo, sans-serif; color: #555; text-align: left; margin: 0 0 32px; }
+.msg__form { max-width: 640px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.msg__field { text-transform: none; letter-spacing: 0; margin: 0; display: flex; flex-direction: column; gap: 6px; font: 400 14px/1.2 Heebo, sans-serif; color: #222; }
+.msg__field--wide, .msg__note, .msg__send, .msg__status { grid-column: 1 / -1; }
+.msg__field input, .msg__field textarea { font: 300 16px/1.4 Heebo, sans-serif; color: #111; background: #fff; border: 1px solid #e1e1e1; border-radius: 12px; padding: 12px 14px; outline: none; resize: vertical; transition: border-color .2s; }
+.msg__field input:focus, .msg__field textarea:focus { border-color: #999; }
+.msg__hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+.msg__note { font: 300 13px/1.4 Heebo, sans-serif; color: #888; margin: 0; }
+.msg__note a { color: inherit; display: inline; text-decoration: underline; }
+.msg__send { justify-self: start; cursor: pointer; margin: 4px 0 0 !important; height: 48px; padding: 0 20px; font-size: 16px; }
+.msg__send[disabled] { opacity: .5; cursor: default; }
+.msg__status { font: 400 15px/1.4 Heebo, sans-serif; margin: 0; min-height: 1.4em; }
+@media (max-width: 767px) { .msg { margin: 72px 16px 40px; } .msg__form { grid-template-columns: 1fr; } }

@@ -1657,4 +1657,19 @@
     if (reduce) return;
     setInterval(function () { c.classList.toggle('is-b'); }, 2500);
   });
+  // Contact form (about page): sent to Basin in the background, answer shown below the button.
+  document.querySelectorAll('form[data-basin]').forEach(function (form) {
+    var status = form.querySelector('.msg__status');
+    var send = form.querySelector('.msg__send');
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      send.disabled = true;
+      status.textContent = 'Sending…';
+      fetch(form.action, { method: 'POST', body: new FormData(form), headers: { Accept: 'application/json' } })
+        .then(function (r) { if (!r.ok) throw new Error(r.status); })
+        .then(function () { form.reset(); status.textContent = 'Thank you! Your message has been sent.'; })
+        .catch(function () { status.textContent = 'Sorry, that did not work. Please try again later or write me on Instagram (@k.hugentobler).'; })
+        .then(function () { send.disabled = false; });
+    });
+  });
 })();
