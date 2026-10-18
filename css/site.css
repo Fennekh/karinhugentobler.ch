@@ -2392,3 +2392,10 @@ html, body { overflow-x: clip; }
   .tile__shade > svg > g { display: none; }
   .tile__rim { display: inline; }
 }
+
+/* phones and tablets: a growing bubble is only scaled as a whole (drawn once, then just resized by the graphics chip);
+   the picture inside no longer zooms against it, which forced a full repaint on every scroll step */
+@media (max-width: 991px), (hover: none) {
+  .container-5 .pingrid { will-change: transform; }
+  .container-5 .pingrid .imggrid, .container-5 .pingrid.is-focus .imggrid { transform: scale(1.06) !important; transition: opacity .7s ease !important; }
+}

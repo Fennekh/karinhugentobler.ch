@@ -1116,7 +1116,7 @@
           if (t._previewOn) { t._previewOn = false; t._previewStop(); }
           if (t._grow !== 0) {
             t._grow = 0; t.classList.remove('is-center');
-            t.style.setProperty('--grow-s', '.76'); t.style.setProperty('--grow-i', (.9 / .76).toFixed(4));
+            t.style.setProperty('--grow-s', '.76');
           }
           return;
         }
@@ -1133,11 +1133,9 @@
           t._dwell = setTimeout(function () { if (t.classList.contains('is-center')) { t._previewOn = true; t._previewStart(); } }, 800);
         } else if (!centred && t._previewOn) { t._previewOn = false; t._previewStop(); }
         var s = .76 + .24 * p;          // bubble: 0.76 → 1.00 (never wider than its column, so never cut)
-        var seen = .9 + .12 * p;        // image as seen: 0.90 → 1.02 (zooms a little too)
         t._grow = p;
         t.style.setProperty('--grow-s', s.toFixed(4));
-        // never below 1.06: the image always overfills the bubble, so no edge can show while it grows
-        t.style.setProperty('--grow-i', Math.max(1.06, seen / s).toFixed(4));
+        // (the picture inside keeps its size relative to the bubble – no extra repaint while scrolling)
       });
     };
     var queueGrow = function () {   // once per frame, together with the screen refresh
@@ -1196,8 +1194,10 @@
       energy = Math.min(1, energy + Math.abs(window.scrollY - lastY) * .004);
       lastY = window.scrollY;
     }, { passive: true });
+    var calmPhone = window.matchMedia('(max-width: 991px), (hover: none)').matches;   // phones: the lines rest when nothing moves
     var wave = function (now) {
       var dt = Math.min(.1, (now - lastStmt) / 1000); lastStmt = now;
+      if (calmPhone && energy < .01) { energy = 0; requestAnimationFrame(wave); return; }
       energy *= Math.pow(.25, dt);                 // swings settle within a few seconds
       phase += dt * (.6 + energy * 3);
       var amp = energy * (document.body.dataset.stmt === 'tbm' ? 34 : 12);   // all swing a little while scrolling, «Motion» the most
