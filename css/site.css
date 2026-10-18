@@ -2413,3 +2413,12 @@ html, body { overflow-x: clip; }
   .navigation-items-copy-copy { align-items: flex-start !important; }
   .navigation-wrap-copy { align-self: flex-start !important; margin-top: 0 !important; }
 }
+/* phones: filter pills as tall as «About», same type size */
+@media (max-width: 767px) {
+  .cat-pill, .has-pills .cat-pill, .navigation-copy .cat-pills .cat-pill, body .cat-pills .cat-pill { height: 48px !important; font-size: 16px !important; padding: 0 16px !important; }
+  .cat-pills { gap: 6px !important; }
+}
+@media (max-width: 380px) {
+  .cat-pill, .has-pills .cat-pill, .navigation-copy .cat-pills .cat-pill, body .cat-pills .cat-pill { padding: 0 12px !important; }
+  .cat-pills { padding-left: 8px !important; padding-right: 8px !important; gap: 5px !important; }
+}
