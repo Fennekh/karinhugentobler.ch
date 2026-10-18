@@ -647,7 +647,14 @@
   document.querySelectorAll('video.hover-video').forEach(function (v) {
     var host = v.closest('.pingrid') || v;
     v.muted = true;
-    if (!canHover) return;   // touch: only the poster picture, the clip is not loaded (keeps the page light)
+    if (!canHover) {   // touch: just the poster as a normal picture (a paused video looked greyish on phones), the clip is not loaded
+      var im = document.createElement('img');
+      im.src = v.getAttribute('poster'); im.alt = v.getAttribute('aria-label') || '';
+      im.className = v.className.replace('hover-video', '').trim();
+      ['width', 'height'].forEach(function (k) { if (v.getAttribute(k)) im.setAttribute(k, v.getAttribute(k)); });
+      v.replaceWith(im);
+      return;
+    }
     var playTimer;
     var play = function () {
       clearTimeout(playTimer);
@@ -898,12 +905,12 @@
     var svg = mk('svg', { viewBox: '0 0 1.5 1.5', preserveAspectRatio: 'none', 'aria-hidden': 'true' }, sh);
     mk('rect', { width: 1.5, height: 1.5, fill: 'rgb(30,38,46)', 'fill-opacity': '.2', mask: 'url(#pbr-' + i + ')' }, mk('g', { filter: 'url(#pbblur)' }, svg));
     // phones: instead of the soft blurred rim (costly), just a fine line along the outline
-    mk('use', { href: '#pbp-' + i, class: 'tile__rim', transform: 'translate(.25 .25)', fill: 'none', stroke: 'rgba(30,38,46,.22)', 'stroke-width': '1', 'vector-effect': 'non-scaling-stroke' }, svg);
+    var rim = mk('path', { class: 'tile__rim', transform: 'translate(.25 .25)', fill: 'none', stroke: 'rgba(30,38,46,.22)', 'stroke-width': '1', 'vector-effect': 'non-scaling-stroke' }, svg);
     t.insertBefore(sh, t.querySelector('.tile__info'));
 
     return t._morph = {
       tailA: null,   // speech-bubble corner switched off (set an angle in radians to bring it back)
-      t: t, path: path, svg: svg, amp: 1, speed: 1, visible: true, on: false, burst: 0,
+      t: t, path: path, rim: rim, svg: svg, amp: 1, speed: 1, visible: true, on: false, burst: 0,
       // harmonics 2–5: base amplitude, phase and drift direction/speed of each
       h: [[2, rnd(.075, .1)], [3, rnd(.05, .075)], [4, rnd(.025, .04)], [5, rnd(.01, .02)]].map(function (k) {
         return { k: k[0], a: k[1], p: rnd(0, 6.283), w: rnd(.12, .3) * (Math.random() < .5 ? -1 : 1) };
@@ -951,6 +958,7 @@
         f(c[0] - (d[0] - b[0]) / 6) + ',' + f(c[1] - (d[1] - b[1]) / 6) + ' ' + f(c[0]) + ',' + f(c[1]);
     }
     m.path.setAttribute('d', s + 'Z');
+    if (m.rim) m.rim.setAttribute('d', s + 'Z');   // the fine outline on phones follows the same shape
   };
   // calm: small amplitude, slow drift (hovered or not) · when hover starts or ends the pebble
   // wobbles strongly and quickly for a moment, then settles back to calm
