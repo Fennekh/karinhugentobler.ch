@@ -2399,3 +2399,8 @@ html, body { overflow-x: clip; }
   .container-5 .pingrid { will-change: transform; }
   .container-5 .pingrid .imggrid, .container-5 .pingrid.is-focus .imggrid { transform: scale(1.06) !important; transition: opacity .7s ease !important; }
 }
+
+/* button arrows: one drawn arrow everywhere (instead of the ← → characters) */
+.ic { display: inline-flex; align-items: center; line-height: 0; }
+.ic-arrow { width: 1.05em; height: 1.05em; flex: none; vertical-align: -0.15em; }
+.ic-arrow--left { transform: scaleX(-1); }
