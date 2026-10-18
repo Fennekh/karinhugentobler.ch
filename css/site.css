@@ -2342,12 +2342,13 @@ html, body { overflow-x: clip; }
     display: flex !important; align-items: center; justify-content: center; transform: none !important;
     background: #fbfbfb; border: 1px solid #e1e1e1; border-radius: 999px; box-sizing: border-box;
   }
-  .logo-image-copy, .has-pills .logo-image-copy { height: 24px !important; width: auto !important; }
+  .logo-link-copy { justify-content: center !important; padding: 0 !important; float: none !important; }
+  .logo-image-copy, .has-pills .logo-image-copy { height: 24px !important; width: auto !important; margin: 0 auto !important; display: block !important; position: static !important; }
   .back-link { top: 14px !important; left: 70px !important; padding: 0 16px !important; font-size: 15px !important; }
   .navigation-copy { top: 14px !important; }
   .navigation-items-copy-copy { padding-top: 0 !important; padding-bottom: 0 !important; padding-right: 14px !important; }
   /* homepage: the statement comes first, below the buttons */
-  .section:has(> .container-5) { margin-top: 0 !important; padding-top: 72px !important; }
+  .section:has(> .container-5) { margin-top: 0 !important; padding-top: max(72px, calc(50svh - 92px)) !important; }   /* the statement sits in the middle of the first screen */
 }
 /* larger screens: buttons on project pages and the about page a little lower */
 @media (min-width: 768px) {

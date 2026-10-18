@@ -625,7 +625,7 @@
   document.querySelectorAll('video.hover-video').forEach(function (v) {
     var host = v.closest('.pingrid') || v;
     v.muted = true;
-    if (!canHover) { v.setAttribute('data-autoplay', ''); return; } // touch: play when visible
+    if (!canHover) return;   // touch: only the poster picture, the clip is not loaded (keeps the page light)
     var playTimer;
     var play = function () {
       clearTimeout(playTimer);
@@ -647,9 +647,12 @@
     el.style.width = cw + 'px'; el.style.height = ch + 'px';
     el.style.left = (w - cw) / 2 + 'px'; el.style.top = (h - ch) / 2 + 'px';
   };
+  var lightPreviews = !canHover || window.matchMedia('(max-width: 767px)').matches;   // phones: no heavy videos, only pictures
   document.querySelectorAll('.container-5 .pingrid').forEach(function (t) {
     var d = t.dataset, layer = null, slideTimer = null;
-    if ((!d.vimeo && !d.previewVideo && !d.slides) || d.vimeoPreload !== undefined) return;
+    if (lightPreviews && (d.vimeo || d.previewVideo) && !d.slides) return;
+    if ((!d.vimeo && !d.previewVideo && !d.slides) || (d.vimeoPreload !== undefined && !lightPreviews)) return;
+    if (lightPreviews && d.slides) { d = { slides: d.slides, slidesMs: d.slidesMs, title: d.title }; }
     var start = function () {
       if (layer) return;
       if (d.vimeo) {
@@ -703,7 +706,7 @@
 
   // Tiles marked data-vimeo-preload: the player is loaded (paused, hidden) as soon as the tile
   // comes near the screen, so on hover the video starts right away instead of loading first
-  document.querySelectorAll('.container-5 .pingrid[data-vimeo-preload]').forEach(function (t) {
+  if (!lightPreviews) document.querySelectorAll('.container-5 .pingrid[data-vimeo-preload]').forEach(function (t) {
     var d = t.dataset, frame = null;
     var send = function (method, value) {
       if (frame && frame.contentWindow) frame.contentWindow.postMessage(JSON.stringify(value === undefined ? { method: method } : { method: method, value: value }), '*');
@@ -917,7 +920,7 @@
   };
   // calm: small amplitude, slow drift (hovered or not) · when hover starts or ends the pebble
   // wobbles strongly and quickly for a moment, then settles back to calm
-  var IDLE_AMP = .4, BURST_AMP = 1, BURST_SPEED = 8;
+  var IDLE_AMP = .4, BURST_AMP = .55, BURST_SPEED = 5;   // a gentle wobble
   morphs.forEach(function (m) { m.amp = IDLE_AMP; drawPebble(m); });
   if (!reduce && morphs.length) {
     if ('IntersectionObserver' in window) {
@@ -947,7 +950,7 @@
         m.burst = (m.burst || 0) * Math.pow(.12, dt);   // the wobble dies away within about a second
         // only a bubble that is hovered, in the middle of the screen or still wobbling is redrawn;
         // all others keep their shape (redrawing every outline and shadow each frame made scrolling stutter)
-        var lively = on || m.t.classList.contains('is-center') || m.burst > .02 || m.shrinkAnim;
+        var lively = on || m.burst > .02 || m.shrinkAnim;
         if (!lively && m.amp <= IDLE_AMP + .001 && m.shrink === m.lastShrink) return;
         m.lastShrink = m.shrink;
         m.amp += (IDLE_AMP + m.burst * BURST_AMP - m.amp) * ease;
