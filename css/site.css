@@ -2422,3 +2422,9 @@ html, body { overflow-x: clip; }
   .cat-pill, .has-pills .cat-pill, .navigation-copy .cat-pills .cat-pill, body .cat-pills .cat-pill { padding: 0 12px !important; }
   .cat-pills { padding-left: 8px !important; padding-right: 8px !important; gap: 5px !important; }
 }
+/* larger screens, project pages and about: «About» level with «Back to overview» */
+@media (min-width: 768px) {
+  body:has(.back-link) .navigation-items-copy-copy { padding-top: 0 !important; padding-bottom: 0 !important; align-items: flex-start !important; }
+  body:has(.back-link) .navigation-wrap-copy { align-self: flex-start !important; margin-top: 0 !important; }
+  body:has(.back-link) .logo-link-copy { top: 22px !important; }
+}

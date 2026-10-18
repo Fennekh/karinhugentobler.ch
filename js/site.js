@@ -870,8 +870,8 @@
   var dice = document.querySelector('.project-nav__dice[data-random]');
   if (dice && window.PROJECTS && window.PROJECTS.length > 1) {
     dice.addEventListener('click', function (e) {
-      var here = location.pathname.split('/').pop();
-      var pool = window.PROJECTS.filter(function (p) { return p !== here; });
+      var here = location.pathname.split('/').pop().replace(/\.html$/, '');   // clean addresses: no «.html»
+      var pool = window.PROJECTS.map(function (p) { return p.replace(/\.html$/, ''); }).filter(function (p) { return p !== here; });
       e.preventDefault();
       dice.classList.add('is-rolling');
       setTimeout(function () { location.href = pool[Math.floor(Math.random() * pool.length)]; }, reduce ? 0 : 350);
