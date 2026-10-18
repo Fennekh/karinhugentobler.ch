@@ -1087,7 +1087,7 @@
         focusTiles.forEach(function (t) { delete t._grow; t.classList.remove('is-center'); t.style.removeProperty('--grow-s'); t.style.removeProperty('--grow-i'); });
         return;
       }
-      var vh = window.innerHeight, mid = vh * 0.42;   // largest a little above the middle of the screen
+      var vh = window.innerHeight, hi = vh * 0.38, lo = vh * 0.5;   // full size anywhere from the middle to a little above it
       var rects = focusTiles.map(function (t) { return t.getBoundingClientRect(); });   // read first, then write
       focusTiles.forEach(function (t, i) {
         var r = rects[i];
@@ -1101,7 +1101,8 @@
           return;
         }
         // grows steadily while it travels from the screen edge to the middle, and is only at full size right in the middle
-        var p = Math.max(0, Math.min(1, 1 - Math.abs(r.top + r.height / 2 - mid) / (vh * 0.6)));
+        var c = r.top + r.height / 2, dist = c < hi ? hi - c : c > lo ? c - lo : 0;
+        var p = Math.max(0, Math.min(1, 1 - dist / (vh * 0.55)));
         p = Math.pow(p, 1.4);
         var centred = p > .88;                           // title (and preview) only while the bubble is in the middle
         if (centred !== t.classList.contains('is-center')) t.classList.toggle('is-center', centred);
