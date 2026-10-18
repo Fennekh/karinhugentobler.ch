@@ -489,6 +489,7 @@
   }
   pills.forEach(function (p) { p.addEventListener('click', function () {
     toggleCat(p.dataset.cat);
+    if (window.innerWidth < 600 && window.centerStatement) { setTimeout(function () { window.centerStatement(true); }, 60); return; }   // phones: the sentence back in the middle
     if (window.scrollY > 0) window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });   // back to the top, where the new selection starts
   }); });
   if (reset) reset.addEventListener('click', function () { selected = []; applyFilter(true); });
@@ -539,7 +540,10 @@
       if (n <= 1) {
         grid.classList.remove('is-masonry');
         allTiles.forEach(function (t) { grid.appendChild(t); });
-        if (stmtT) grid.insertBefore(stmtT, grid.firstChild);   // phones: the statement (also the filter sentences) always comes first
+        if (stmtT) {   // phones: the statement right after the first visible bubble (it is then centred on the screen)
+          var firstVis = allTiles.filter(function (t) { return t !== stmtT && !t.classList.contains('is-gone') && !t.hasAttribute('data-duplicate'); })[0];
+          if (firstVis) { grid.insertBefore(firstVis, grid.firstChild); firstVis.after(stmtT); }
+        }
         return;
       }
       grid.classList.add('is-masonry');
@@ -599,6 +603,24 @@
       var r = st.getBoundingClientRect(), mid = r.top + window.scrollY + r.height / 2, want = window.innerHeight * 2 / 3;
       if (mid > want) sec.style.setProperty('margin-top', (parseFloat(getComputedStyle(sec).marginTop) - (mid - want)).toFixed(0) + 'px', 'important');
     };
+    // phones: the statement always sits in the middle of the screen – the first bubble above it may be cut off
+    // at the top, and one can scroll up to see it whole
+    window.centerStatement = function (smooth) {
+      if (!sec || window.innerWidth >= 600) return;
+      var st = grid.querySelector('.grid-statement');
+      if (!st) return;
+      sec.style.removeProperty('padding-top');
+      var r = st.getBoundingClientRect(), mid = r.top + window.scrollY + r.height / 2, want = window.innerHeight / 2;
+      if (mid < want) {   // not enough above it: push it down so it can still sit in the middle
+        sec.style.setProperty('padding-top', (parseFloat(getComputedStyle(sec).paddingTop) + want - mid).toFixed(0) + 'px', 'important');
+        mid = want;
+      }
+      window.scrollTo({ top: Math.max(0, mid - want), behavior: smooth && !reduce ? 'smooth' : 'auto' });
+    };
+    var firstCentre = function () { if (!location.hash && window.scrollY < 5) window.centerStatement(false); };
+    window.addEventListener('load', firstCentre);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(firstCentre);
+    setTimeout(firstCentre, 60);
     window.addEventListener('load', liftStatement);
     window.addEventListener('resize', function () { setTimeout(liftStatement, 80); });
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(liftStatement);
@@ -1065,7 +1087,7 @@
         focusTiles.forEach(function (t) { delete t._grow; t.classList.remove('is-center'); t.style.removeProperty('--grow-s'); t.style.removeProperty('--grow-i'); });
         return;
       }
-      var vh = window.innerHeight, mid = vh / 2;
+      var vh = window.innerHeight, mid = vh * 0.42;   // largest a little above the middle of the screen
       var rects = focusTiles.map(function (t) { return t.getBoundingClientRect(); });   // read first, then write
       focusTiles.forEach(function (t, i) {
         var r = rects[i];
@@ -1659,7 +1681,7 @@
   // Buttons bob gently up and down while the page is scrolled, each a little out of step
   (function () {
     if (reduce) return;
-    var sel = '.navigation-item-copy, .navigation-item-copy-2, .back-link, .project-nav__link, .project-nav__dice, .surprise-btn';
+    var sel = '.navigation-item-copy, .navigation-item-copy-2, .back-link, .project-nav__link, .project-nav__dice, .surprise-btn' + (window.innerWidth < 768 ? ', .logo-link-copy' : '');
     var energy = 0, lastY = window.scrollY, ph = 0, raf = 0, last = performance.now();
     var tick = function (now) {
       var dt = Math.min(.1, (now - last) / 1000); last = now;
