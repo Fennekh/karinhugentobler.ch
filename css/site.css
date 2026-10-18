@@ -2309,3 +2309,7 @@ body.pills-inline.has-pills .cat-pills.is-stuck { position: fixed !important; to
 .msg__send[disabled] { opacity: .5; cursor: default; }
 .msg__status { font: 400 15px/1.4 Heebo, sans-serif; margin: 0; min-height: 1.4em; }
 @media (max-width: 767px) { .msg { margin: 72px 16px 40px; } .msg__form { grid-template-columns: 1fr; } }
+
+/* subheadings in the media column: a little air below, and the very first one keeps its line padding too */
+.split__media .media-heading, .hz-project__media .media-heading { margin-bottom: 12px !important; }
+.split__media > .media-heading:first-child { padding-top: 14px !important; }
