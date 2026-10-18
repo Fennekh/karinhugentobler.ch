@@ -539,10 +539,7 @@
       if (n <= 1) {
         grid.classList.remove('is-masonry');
         allTiles.forEach(function (t) { grid.appendChild(t); });
-        if (stmtT) {   // phones: the statement right after the first visible bubble
-          var firstVis = allTiles.filter(function (t) { return t !== stmtT && !t.classList.contains('is-gone') && !t.hasAttribute('data-duplicate'); })[0];
-          if (firstVis) { grid.insertBefore(firstVis, grid.firstChild); firstVis.after(stmtT); }
-        }
+        if (stmtT) grid.insertBefore(stmtT, grid.firstChild);   // phones: the statement (also the filter sentences) always comes first
         return;
       }
       grid.classList.add('is-masonry');
@@ -596,7 +593,7 @@
     var liftStatement = function () {
       if (!sec) return;
       sec.style.removeProperty('margin-top');
-      if (window.innerWidth >= 992 || selected.length) return;
+      if (window.innerWidth >= 992 || window.innerWidth < 600 || selected.length) return;   // phones: the statement is simply on top
       var st = grid.querySelector('.grid-statement');
       if (!st) return;
       var r = st.getBoundingClientRect(), mid = r.top + window.scrollY + r.height / 2, want = window.innerHeight * 2 / 3;
@@ -948,7 +945,13 @@
           m.lastGrow = m.t._grow;
         }
         m.burst = (m.burst || 0) * Math.pow(.12, dt);   // the wobble dies away within about a second
+        // only a bubble that is hovered, in the middle of the screen or still wobbling is redrawn;
+        // all others keep their shape (redrawing every outline and shadow each frame made scrolling stutter)
+        var lively = on || m.t.classList.contains('is-center') || m.burst > .02 || m.shrinkAnim;
+        if (!lively && m.amp <= IDLE_AMP + .001 && m.shrink === m.lastShrink) return;
+        m.lastShrink = m.shrink;
         m.amp += (IDLE_AMP + m.burst * BURST_AMP - m.amp) * ease;
+        if (!lively && m.amp < IDLE_AMP + .002) m.amp = IDLE_AMP;
         m.speed += (1 + m.burst * BURST_SPEED - m.speed) * ease;
         m.h.forEach(function (h) { h.p += h.w * m.speed * dt; });
         drawPebble(m);
@@ -969,7 +972,7 @@
 
   // Light from above the screen: the paper-edge shadow inside each pebble shifts while scrolling
   var lit = document.querySelectorAll('.container-5 .pingrid');
-  if (lit.length && !reduce) {
+  if (lit.length && !reduce && window.matchMedia('(hover: hover) and (min-width: 768px)').matches) {   // phones: skipped, too costly while scrolling
     var shade = function () {
       var vw = window.innerWidth, vh = window.innerHeight;
       var rects = [].map.call(lit, function (t) { return t.getBoundingClientRect(); });   // read everything first, then write (no layout thrashing)

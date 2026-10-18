@@ -2318,3 +2318,41 @@ body.pills-inline.has-pills .cat-pills.is-stuck { position: fixed !important; to
 html, body { overflow-x: clip; }
 /* the photo bubble's soft shadow and zoomed image must not widen the page (they were cut by the pebble shape anyway) */
 .bubble-photo { overflow: clip !important; }
+
+/* ===== Smoother scrolling (18.10.2026) ===== */
+/* no endless floating of every bubble – only the growing in the middle stays */
+.container-5 .pingrid { animation: none !important; }
+/* bubbles fade in without the costly blur filter */
+.imggrid.blur { filter: none !important; transition: opacity .7s ease !important; }
+.pingrid.is-out .imggrid.blur, .is-visible.is-out .imggrid.blur { filter: none !important; }
+/* phones and tablets: plain (no frosted-glass blur) behind the fixed buttons and filter bar */
+@media (max-width: 991px), (hover: none) {
+  .has-pills .navigation-copy, .navigation-copy, .cat-pills, .cat-pill, .back-link, .navigation-item-copy, .navigation-item-copy-2, .logo-link-copy {
+    -webkit-backdrop-filter: none !important; backdrop-filter: none !important;
+  }
+}
+
+/* ===== Phones: more side margin, round home button, buttons not glued to the top ===== */
+@media (max-width: 767px) {
+  .split { padding-left: 22px !important; padding-right: 22px !important; }
+  .container-5 { padding-left: 6px !important; padding-right: 6px !important; }
+  /* the two dots (home) become a round button, as tall as «About» */
+  .logo-link-copy {
+    left: 14px !important; top: 14px !important; width: 48px; height: 48px !important;
+    display: flex !important; align-items: center; justify-content: center; transform: none !important;
+    background: #fbfbfb; border: 1px solid #e1e1e1; border-radius: 999px; box-sizing: border-box;
+  }
+  .logo-image-copy, .has-pills .logo-image-copy { height: 24px !important; width: auto !important; }
+  .back-link { top: 14px !important; left: 70px !important; padding: 0 16px !important; font-size: 15px !important; }
+  .navigation-copy { top: 14px !important; }
+  .navigation-items-copy-copy { padding-top: 0 !important; padding-bottom: 0 !important; padding-right: 14px !important; }
+  /* homepage: the statement comes first, below the buttons */
+  .section:has(> .container-5) { margin-top: 0 !important; padding-top: 72px !important; }
+}
+/* larger screens: buttons on project pages and the about page a little lower */
+@media (min-width: 768px) {
+  body:has(.back-link) .back-link { top: 24px !important; }
+  body:has(.back-link) .navigation-copy { top: 24px !important; }
+  body:has(.back-link) .logo-link-copy { top: 28px !important; }
+}
+@media (max-width: 767px) { .about-journey .tl__time, .tl__time { font-size: 11.5px !important; } }
