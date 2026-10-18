@@ -1078,10 +1078,10 @@
           }
           return;
         }
-        var p = Math.max(0, Math.min(1, 1 - Math.abs(r.top + r.height / 2 - mid) / (vh * 0.45)));
-        p = p * p * (3 - 2 * p);                        // smoothstep …
-        p = p * p * p * (p * (p * 6 - 15) + 10);         // … and smootherstep on top: a strong ease-in-out
-        var centred = p > .85;                           // title (and preview) only while the bubble is in the middle
+        // grows steadily while it travels from the screen edge to the middle, and is only at full size right in the middle
+        var p = Math.max(0, Math.min(1, 1 - Math.abs(r.top + r.height / 2 - mid) / (vh * 0.6)));
+        p = Math.pow(p, 1.4);
+        var centred = p > .88;                           // title (and preview) only while the bubble is in the middle
         if (centred !== t.classList.contains('is-center')) t.classList.toggle('is-center', centred);
         // the preview (video or pictures) only starts once the bubble has rested in the middle for a moment
         // (each scroll step restarts the wait), so nothing loads while one scrolls past – keeps scrolling smooth

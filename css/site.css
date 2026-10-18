@@ -2368,3 +2368,12 @@ html, body { overflow-x: clip; }
 .msg { margin-top: 72px !important; }
 @media (max-width: 767px) { .msg { margin-top: 48px !important; } }
 .journey__note .tl__role { font: 300 16px/1.5 Heebo, Montserrat, sans-serif !important; letter-spacing: 0 !important; }
+
+/* nothing may stick out on the right (iPhones then widen the whole page and cut it off):
+   clip at the containers themselves, not only at <html>/<body> */
+.section, .split, .about-journey, .msg, .project-nav, .legal-line { overflow-x: clip; }
+.grid-statement__svg { overflow: hidden; }
+/* phones: the home button is a plain button – sharp dots, no blur */
+@media (max-width: 767px) {
+  .logo-image-copy, .has-pills .logo-image-copy { filter: none !important; animation: none !important; opacity: 1 !important; }
+}
