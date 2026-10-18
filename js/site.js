@@ -942,7 +942,8 @@
   };
   // calm: small amplitude, slow drift (hovered or not) · when hover starts or ends the pebble
   // wobbles strongly and quickly for a moment, then settles back to calm
-  var IDLE_AMP = .4, BURST_AMP = .55, BURST_SPEED = 5;   // a gentle wobble
+  var deskWobble = window.matchMedia('(hover: hover) and (min-width: 768px)').matches;   // desktop: all pebbles keep moving gently
+  var IDLE_AMP = deskWobble ? .34 : .4, BURST_AMP = deskWobble ? .85 : .55, BURST_SPEED = deskWobble ? 7 : 5;   // a little calmer than before
   morphs.forEach(function (m) { m.amp = IDLE_AMP; drawPebble(m); });
   if (!reduce && morphs.length) {
     if ('IntersectionObserver' in window) {
@@ -972,7 +973,7 @@
         m.burst = (m.burst || 0) * Math.pow(.12, dt);   // the wobble dies away within about a second
         // only a bubble that is hovered, in the middle of the screen or still wobbling is redrawn;
         // all others keep their shape (redrawing every outline and shadow each frame made scrolling stutter)
-        var lively = on || m.burst > .02 || m.shrinkAnim;
+        var lively = deskWobble || on || m.burst > .02 || m.shrinkAnim;
         if (!lively && m.amp <= IDLE_AMP + .001 && m.shrink === m.lastShrink) return;
         m.lastShrink = m.shrink;
         m.amp += (IDLE_AMP + m.burst * BURST_AMP - m.amp) * ease;
@@ -991,7 +992,7 @@
     var rnd = function (a, b) { return a + Math.random() * (b - a); };
     t.style.setProperty('--float-dur', rnd(11, 18).toFixed(1) + 's');
     t.style.setProperty('--float-delay', '-' + rnd(0, 18).toFixed(1) + 's');
-    t.style.setProperty('--float-y', rnd(2, 4).toFixed(1) + 'px');
+    t.style.setProperty('--float-y', rnd(1.6, 3.2).toFixed(1) + 'px');   // a little less than before
     t.style.setProperty('--float-r', '0deg');
   });
 
