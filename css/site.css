@@ -2428,3 +2428,7 @@ html, body { overflow-x: clip; }
   body:has(.back-link) .navigation-wrap-copy { align-self: flex-start !important; margin-top: 0 !important; }
   body:has(.back-link) .logo-link-copy { top: 22px !important; }
 }
+/* about photo is now a portrait: a little narrower so it does not get too tall */
+.bubble-photo--about { aspect-ratio: 4 / 5 !important; }
+.bubble-photo--about img { object-position: 50% 30%; }
+@media (min-width: 992px) { .bubble-photo--about { max-width: 460px !important; } }
