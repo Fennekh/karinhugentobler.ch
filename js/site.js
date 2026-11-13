@@ -121,7 +121,16 @@
   var relayout = null;
   // The statement between the bubbles changes with the filter (last chosen category wins)
   document.body.classList.add('pills-top');   // filters sit at the top
-  var STATEMENTS = {
+  var isDE = document.documentElement.lang === 'de';   // German version of the site (de/…)
+  var STATEMENTS = isDE ? {
+    '': 'Ich visualisiere:',
+    tbm: 'Lust, etwas zu bewegen.',
+    info: 'Auf Datenschatzsuche.',
+    id: 'Konsistenz küsst Abwechslung.',
+    foto: 'Momente im Fokus.',
+    illu: 'Ideen Leben einhauchen.',
+    interaktion: 'Denk dran: Die User:innen haben immer recht.'
+  } : {
     '': 'I visualize',
     tbm: 'Get things moving.',
     info: 'Data treasure hunting.',
@@ -287,7 +296,11 @@
   var rememberFirst = function (chars) {
     focusLetters();
     if (reduce) return;
-    var firstLine = chars.length && chars[0].parentNode, rest = chars.filter(function (t) { return t.parentNode !== firstLine; });
+    // first part up to the comma or colon («Remember,» / «Denk dran:»), else the first line
+    var cut = -1;
+    chars.some(function (t, i) { if (/[,:]/.test(t.textContent)) { cut = i; return true; } return false; });
+    var firstLine = chars.length && chars[0].parentNode;
+    var rest = cut > -1 ? chars.slice(cut + 1) : chars.filter(function (t) { return t.parentNode !== firstLine; });
     rest.forEach(function (t) { t.style.transition = 'none'; t.style.fillOpacity = '0'; });
     clearTimeout(rememberFirst.t);
     rememberFirst.t = setTimeout(function () {
@@ -344,7 +357,7 @@
     // without a filter: one big line «I visualise» and the topics small underneath
     var sub = p.querySelector('.grid-statement__sub');
     if (!sub) { sub = document.createElement('span'); sub.className = 'grid-statement__sub'; p.appendChild(sub); }
-    var subTxt = selected.length ? '' : 'Interaction · Data Viz · Motion · Identity · Photography · Illustration';
+    var subTxt = selected.length ? '' : (isDE ? 'Interaktion · Data Viz · Animation · Identität · Fotografie · Illustration' : 'Interaction · Data Viz · Motion · Identity · Photography · Illustration');
     sub.classList.remove('is-leaving');
     var fitSub = function () {   // the topic line on one line if it fits at a still readable size, otherwise it wraps
       sub.style.fontSize = ''; sub.style.whiteSpace = 'nowrap';
@@ -1739,11 +1752,11 @@
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       send.disabled = true;
-      status.textContent = 'Sending…';
+      status.textContent = document.documentElement.lang === 'de' ? 'Nachricht wird gesendet …' : 'Sending…';
       fetch(form.action, { method: 'POST', body: new FormData(form), headers: { Accept: 'application/json' } })
         .then(function (r) { if (!r.ok) throw new Error(r.status); })
-        .then(function () { form.reset(); status.textContent = 'Thank you! Your message has been sent.'; })
-        .catch(function () { status.textContent = 'Sorry, that did not work. Please try again later or write me on Instagram (@k.hugentobler).'; })
+        .then(function () { form.reset(); status.textContent = document.documentElement.lang === 'de' ? 'Danke für deine Nachricht. Ich werde mich bei dir melden.' : 'Thank you! Your message has been sent.'; })
+        .catch(function () { status.textContent = document.documentElement.lang === 'de' ? 'Hmm, da scheint etwas nicht geklappt zu haben. Bitte versuch es später nochmals, doppelt hält ja bekanntlich besser, oder schreib mir auf Instagram (@k.hugentobler).' : 'Sorry, that did not work. Please try again later or write me on Instagram (@k.hugentobler).'; })
         .then(function () { send.disabled = false; });
     });
   });

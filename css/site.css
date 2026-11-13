@@ -2432,3 +2432,20 @@ html, body { overflow-x: clip; }
 .bubble-photo--about { aspect-ratio: 4 / 5 !important; }
 .bubble-photo--about img { object-position: 50% 30%; }
 @media (min-width: 992px) { .bubble-photo--about { max-width: 460px !important; } }
+/* about photo: much smaller */
+.bubble-photo--about { max-width: 300px !important; margin-left: auto !important; margin-right: auto !important; }
+@media (max-width: 767px) { .bubble-photo--about { max-width: 220px !important; } }
+
+/* ===== language switch DE / EN: a round button left of «About» ===== */
+.navigation-items-copy.w-nav-menu { display: flex !important; align-items: center; gap: 8px; }
+.lang-toggle { justify-content: center; min-width: 40px; padding: 0 14px !important; letter-spacing: .02em; }
+@media (max-width: 767px) {
+  .lang-toggle { width: 48px; min-width: 48px; padding: 0 !important; }
+  /* phones: «Back to overview» becomes a round arrow button, so home, back, language and About fit in one row */
+  .back-link { width: 48px !important; padding: 0 !important; justify-content: center !important; font-size: 0 !important; gap: 0 !important; }
+  .back-link .ic { font-size: 17px; }
+}
+/* about photo: right next to the text, a little bigger */
+@media (min-width: 768px) {
+  .bubble-photo--about { max-width: 380px !important; margin-left: 0 !important; margin-right: auto !important; }
+}
