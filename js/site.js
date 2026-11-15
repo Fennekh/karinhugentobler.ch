@@ -123,7 +123,7 @@
   document.body.classList.add('pills-top');   // filters sit at the top
   var isDE = document.documentElement.lang === 'de';   // German version of the site (de/…)
   var STATEMENTS = isDE ? {
-    '': 'Ich visualisiere:',
+    '': 'Ich visualisiere',
     tbm: 'Lust, etwas zu bewegen.',
     info: 'Auf Datenschatzsuche.',
     id: 'Konsistenz küsst Abwechslung.',
