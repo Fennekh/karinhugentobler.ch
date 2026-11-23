@@ -1,6 +1,7 @@
 /* Replaces the Webflow Interactions (IX2) runtime. */
 (function () {
   var body = document.body;
+  try { localStorage.setItem('lang', document.documentElement.lang === 'de' ? 'de' : 'en'); } catch (e) {}   // remembered, so karinhugentobler.ch opens in the language last used
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 
@@ -357,7 +358,7 @@
     // without a filter: one big line «I visualise» and the topics small underneath
     var sub = p.querySelector('.grid-statement__sub');
     if (!sub) { sub = document.createElement('span'); sub.className = 'grid-statement__sub'; p.appendChild(sub); }
-    var subTxt = selected.length ? '' : (isDE ? 'Interaktion · Data Viz · Animation · Identität · Fotografie · Illustration' : 'Interaction · Data Viz · Motion · Identity · Photography · Illustration');
+    var subTxt = selected.length ? '' : (isDE ? 'Interaktion · Animation · Data Viz · Identität · Fotografie · Illustration' : 'Interaction · Motion · Data Viz · Identity · Photography · Illustration');
     sub.classList.remove('is-leaving');
     var fitSub = function () {   // the topic line on one line if it fits at a still readable size, otherwise it wraps
       sub.style.fontSize = ''; sub.style.whiteSpace = 'nowrap';
