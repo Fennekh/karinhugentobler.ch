@@ -2449,3 +2449,9 @@ html, body { overflow-x: clip; }
 @media (min-width: 768px) {
   .bubble-photo--about { max-width: 380px !important; margin-left: 0 !important; margin-right: auto !important; }
 }
+
+/* title picture at the top of the SimpleTrain website section */
+.project-cover { width: 100%; height: auto; display: block; margin: 0 0 16px; }
+
+/* hidden page with a video: grey box until the video is there */
+.video-placeholder { aspect-ratio: 16 / 9; width: 100%; background: #e8e8e6; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #777; font-size: 15px; }
